@@ -1,41 +1,61 @@
 use std::{error::Error, string};
 
 struct board {
-    board: [[square; 8]; 8]
+    board: [[square; 8]; 8],
 }
 
 type bitmask = u16;
 
-struct square { 
-    mask: bitmask
+struct square {
+    mask: bitmask,
 }
 
+#[derive(Debug)]
 enum SquareError {
-    Range(String),
+    OOR(String),
 }
 
 impl square {
     pub fn new() -> square {
-        square { 
-            mask: 0 
-        }
+        square { mask: 0 }
     }
 
-    fn flip(&mut self, bit: bitmask) {
-        self.mask ^= bit;
-    }
+    fn valid_pos_list(&self) -> Vec<u16> {
+        let mut valid = Vec::new();
 
-    fn is_flipped(&self, bit: bitmask) -> Result<bool, SquareError> {
-        if bit > 9 {
-            return Err(SquareError::Range("bitmask out of range".to_string()));
+        for i in 0..=8 {
+            if self.is_pos_set(i) {
+                valid.push(i);
+            }
         }
 
-        Ok(self.mask & bit != 0)
+        valid
+    }
+
+    fn set_pos(&mut self, pos: u16) {
+        self.mask |= 1 << (pos);
+    }
+
+    fn unset_pos(&mut self, pos: u16) {
+        self.mask = self.mask & !(1 << pos);
+    }
+
+    fn is_pos_set(&self, pos: u16) -> bool {
+        (self.mask & (1 << pos)) != 0
     }
 }
 
 fn main() {
     let mut s = square::new();
 
-    s.flip(1);
+    s.set_pos(0);
+
+    s.set_pos(4);
+    s.unset_pos(4);
+
+    s.set_pos(8);
+
+    println!("{:?}", s.is_pos_set(1));
+
+    println!("{:?}", s.valid_pos_list());
 }
