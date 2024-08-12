@@ -1,3 +1,5 @@
+use std::{error::Error, string};
+
 struct board {
     board: [[square; 8]; 8]
 }
@@ -6,6 +8,10 @@ type bitmask = u16;
 
 struct square { 
     mask: bitmask
+}
+
+enum SquareError {
+    Range(String),
 }
 
 impl square {
@@ -19,16 +25,17 @@ impl square {
         self.mask ^= bit;
     }
 
-    fn is_flipped(&self, bit: bitmask) -> bool {
-        self.mask & bit != 0
+    fn is_flipped(&self, bit: bitmask) -> Result<bool, SquareError> {
+        if bit > 9 {
+            return Err(SquareError::Range("bitmask out of range".to_string()));
+        }
+
+        Ok(self.mask & bit != 0)
     }
 }
 
 fn main() {
     let mut s = square::new();
 
-    println!("{}", s.is_flipped(1));
     s.flip(1);
-    println!("{}", s.is_flipped(1));
-    println!("{}", s.is_flipped(0));
 }
