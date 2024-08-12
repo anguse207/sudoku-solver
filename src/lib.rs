@@ -1,13 +1,11 @@
-use std::{error::Error, string};
-
-struct board {
-    board: [[square; 8]; 8],
+struct Board {
+    board: [[Square; 8]; 8],
 }
 
-type bitmask = u16;
+type Bitmask = u16;
 
-struct square {
-    mask: bitmask,
+struct Square {
+    mask: Bitmask,
 }
 
 #[derive(Debug)]
@@ -15,9 +13,9 @@ enum SquareError {
     OOR(String),
 }
 
-impl square {
-    pub fn new() -> square {
-        square { mask: 0 }
+impl Square {
+    pub fn new() -> Square {
+        Square { mask: 0 }
     }
 
     fn valid_pos_list(&self) -> Vec<u16> {
@@ -45,17 +43,5 @@ impl square {
     }
 }
 
-fn main() {
-    let mut s = square::new();
-
-    s.set_pos(0);
-
-    s.set_pos(4);
-    s.unset_pos(4);
-
-    s.set_pos(8);
-
-    println!("{:?}", s.is_pos_set(1));
-
-    println!("{:?}", s.valid_pos_list());
-}
+#[cfg(test)]
+mod tests;
